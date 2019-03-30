@@ -360,7 +360,6 @@ def standup():
 #    rotate(22)    
 #for x in range(2):
 #    rotate(-22)    
-
     
 ##Segment Tester
 #while True:  

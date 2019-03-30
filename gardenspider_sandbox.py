@@ -55,7 +55,7 @@ def main():
         for result in inference.run(args.num_frames):
             objs = object_detection.get_objects(result, threshold=0.3, offset=(0, 0))
             print (objs)
-#
+
             annotator.clear()
             for obj in objs:
                 print (obj.bounding_box[0])
@@ -66,8 +66,9 @@ def main():
                 print (obj.score)
                 if obj.kind == 1 and obj.score > 0.5:
                     servo.triwalk(x/41) #820/20
-#                    servo.rotate(x/18.222) #820/45
                     print('xval: %f', x/41)
+#                    servo.rotate(x/18.222) #820/45
+#                    print('xval: %f', x/18.222)
                    
 #                annotator.bounding_box(transform(obj.bounding_box), fill=0)
 #                
@@ -80,10 +81,6 @@ def main():
 #                print (camera.annotate_text)
 #                if camera.annotate_text == 'mountain bike/all-terrain bike/off-roader':
 #                    print ("bike!")
-
-
-
-
 
 if __name__ == '__main__':
     main()
