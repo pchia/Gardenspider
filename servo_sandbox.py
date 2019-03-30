@@ -1,9 +1,7 @@
 import time
 from adafruit_servokit import ServoKit
 
-
 kit = [ServoKit(address=0x40, channels=16), ServoKit(address=0x41, channels=16)]
-
 
 for c in range(16):
     kit[0].servo[c].actuation_range = 270
@@ -31,12 +29,8 @@ joint0 = [LB[0],LM[0],LF[0],RB[0],RM[0],RF[0]]
 joint1 = [LB[1],LM[1],LF[1],RB[1],RM[1],RF[1]]
 joint2 = [LB[2],LM[2],LF[2],RB[2],RM[2],RF[2]]
 
-
-
 offset = -135
 # Setting limits on movement ranges
-
-
 max_angle_joint0 = 30
 min_angle_joint0 = -30
 max_angle_joint1 = 100
@@ -44,21 +38,8 @@ min_angle_joint1 = -100
 max_angle_joint2 = 120
 min_angle_joint2 = -120
 
-
-
-#def initalize():
-#    c = 0
-#    for c in range(16):
-#        if c%3 == 0:
-#            kit[0].servo[c].angle = 135
-#            kit[1].servo[c].angle = 135
-#        else:
-#            kit[0].servo[c].angle = 180
-#            kit[1].servo[c].angle = 90	 
-#    time.sleep(1)
-    
-
 def seg(joint,deg):
+    
 # Enforcing the limits on movement ranges
     if joint in joint0 and deg > max_angle_joint0:
         deg = max_angle_joint0    
@@ -134,10 +115,8 @@ def seg(joint,deg):
         tuning = 2 
         joint.angle = abs(offset + deg + tuning)                  
 
-
-
 def triwalk(drift):
-    #if positive, walk straight with slight right drift and vice versa
+#if positive, walk straight with slight right drift and vice versa
     if drift > 0: #moving right
         R_drift = -drift
         L_drift = 0
@@ -239,22 +218,10 @@ def rotate(direction):
         direction = 45
     if direction < -45: #limit min
         direction = -45
-
-
+        
     r = -float(direction)/45
     l = float(direction)/45
-
-     
-    
-    
-#    if direction == 'R' or direction == 'r' or direction == 'right' or direction == 'Right':
-#        r = -1
-#        l = 1
-#    if direction == 'L' or direction == 'l' or direction == 'left' or direction == 'Left':
-#        r = 1
-#        l = -1
-
-            
+           
 #Raise and Pivot legs LF LB  RM  
     seg(LF[0],20 * l)
     seg(LF[1],10)
@@ -339,94 +306,7 @@ def rotate(direction):
     seg(RF[1],-30)
     seg(RF[2],-60)
     
-    time.sleep(speed)    
-    
-    
-##Raise and Pivot legs A C & E
-#    seg(LF[0],25)
-#    seg(LF[1],-20)
-#    seg(LF[2],-45)
-#       
-#    seg(LB[0],25)
-#    seg(LB[1],-20)
-#    seg(LB[2],-45)
-#     
-#    seg(RM[0],25)
-#    seg(RM[1],-20)
-#    seg(RM[2],45)
-#        
-##Pivot legs B D & F
-#    seg(LM[0],0)
-#    seg(LM[1],45)
-#    seg(LM[2],-45)
-#        
-#    seg(RB[0],0)
-#    seg(RB[1],45)
-#    seg(RB[2],45)
-#     
-#    seg(RF[0],0)
-#    seg(RF[1],45)
-#    seg(RF[2],45)
-#
-#    time.sleep(speed)     
-#        
-##Raise and Pivot legs B D & F
-#    seg(LM[0],25)
-#    seg(LM[1],0)
-#    seg(LM[2],-45)
-#        
-#    seg(RB[0],25)
-#    seg(RB[1],0)
-#    seg(RB[2],45)
-#     
-#    seg(RF[0],25)
-#    seg(RF[1],0)
-#    seg(RF[2],45)
-#        
-##Lower legs A C & E    
-#    seg(LF[0],25)
-#    seg(LF[1],45)
-#    seg(LF[2],-45)
-#       
-#    seg(LB[0],25)
-#    seg(LB[1],45)
-#    seg(LB[2],-45)
-#     
-#    seg(RM[0],25)
-#    seg(RM[1],45)
-#    seg(RM[2],45)
-#        
-#    time.sleep(speed)     
-#    
-##Lower legs B D & F
-#    seg(LM[0],25)
-#    seg(LM[1],45)
-#    seg(LM[2],-45)
-#        
-#    seg(RB[0],25)
-#    seg(RB[1],45)
-#    seg(RB[2],45)
-#     
-#    seg(RF[0],25)
-#    seg(RF[1],45)
-#    seg(RF[2],45)
-#        
-##Pivot legs A C & E    
-#    seg(LF[0],0)
-#    seg(LF[1],45)
-#    seg(LF[2],-45)
-#       
-#    seg(LB[0],0)
-#    seg(LB[1],45)
-#    seg(LB[2],-45)
-#     
-#    seg(RM[0],0)
-#    seg(RM[1],45)
-#    seg(RM[2],45)
-#        
-#    time.sleep(speed)  
-
-    
+    time.sleep(speed)       
     
 def test(leg):
     seg(leg,0)
@@ -449,8 +329,6 @@ def zero(x):
         seg(LB[c],x)
         seg(LM[c],x)
         seg(LF[c],x)
-#        kit[0].servo[c].angle = 135
-#        kit[1].servo[c].angle = 135
 
 def standup():
     for j1 in joint1:
@@ -483,14 +361,11 @@ def standup():
 #for x in range(2):
 #    rotate(-22)    
 
-#    
-
+    
+##Segment Tester
 #while True:  
 #    segment = 0
 #    x ='segment'    
 #    exec("%s = %s" % (x,input("enter segment ")))
 #    test(segment)
 #zero()
-
-
-#initalize()
