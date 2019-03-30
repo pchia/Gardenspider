@@ -344,7 +344,23 @@ def standup():
         seg(j2,-60)
     time.sleep(1)
     
-
+def squat(height): #0-10. 0 = body resting on ground
+    rotate(0) #puts legs in safe position before squatting
+    
+    for j1 in joint1:
+        seg(j1,-30)
+    time.sleep(0.25)
+    for j2 in joint2:
+        seg(j2,-60)
+    time.sleep(1)
+    
+    for j1 in joint1:
+        seg(j1,90 - height*120/10)
+    for j2 in joint2:
+        seg(j2,-110 + height*50/10)
+    time.sleep(1)
+    
+    
 #zero(0)
 #time.sleep(1)
 #standup()   
