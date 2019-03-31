@@ -10,8 +10,10 @@ image_classification_camera.py --num_frames 10
 import argparse
 import contextlib
 import servo
+import LED
 import time
-from aiy.leds import Leds, Color
+import _thread
+#from threading import Thread
 from aiy.vision.inference import CameraInference
 from aiy.vision.models import object_detection
 from picamera import PiCamera
@@ -39,6 +41,8 @@ def main():
     parser.add_argument('--nopreview', dest='preview', action='store_false', default=True,
         help='Enable camera preview')
     args = parser.parse_args()
+    
+#    servo.standup()
 
     with PiCamera(sensor_mode=4, framerate=30, resolution=(1640, 1232)) as camera, \
          CameraPreview(camera, enabled=args.preview), \
@@ -55,10 +59,10 @@ def main():
         for result in inference.run(args.num_frames):
             objs = object_detection.get_objects(result, threshold=0.3, offset=(0, 0))
             print (objs)
-            annotator.clear()
-            for obj in objs:                                     
-                annotator.bounding_box(transform(obj.bounding_box), fill=0)
-            annotator.update()
+#            annotator.clear()
+#            for obj in objs:                                     
+#                annotator.bounding_box(transform(obj.bounding_box), fill=0)
+#            annotator.update()
             if objs:
                 obj = objs[0]
                 x, y, width, height = obj.bounding_box
@@ -70,16 +74,22 @@ def main():
                 y = float(1232/2 - (y0 + height/2)) #y range is -616 to 616
                 print (obj.kind)
                 print (obj.score)
+                
                 if obj.kind == 1 and obj.score > 0.5: 
-                    Leds.update(Leds.rgb_on(Color.BLUE)) #Blue = I see you
-                    servo.triwalk(x/41) #820/20
-                    print('xval: %f', x/41)
+                    LED.color(0,0,255)
+                    _thread.start_new_thread(servo.triwalk,(x/41,)) #820/20
+                    _thread.start_new_thread(LED.color,(0,0,255,))
+
+#                    _thread.start_new_thread(servo.rotate,(x/18.222,)) #820/45
+
+#                    servo.triwalk(x/41) #820/20
+#                    print('xval: %f', x/41)
 #                    servo.rotate(x/18.222) #820/45
 #                    print('xval: %f', x/18.222)
                     if -50<x<50:
-                        Leds.update(Leds.rgb_on(Color.GREEN)) #Green = I'm aiming at you
+                        LED.color(0,255,0) #Green = I'm aiming at you
                 else:
-                    Leds.update(Leds.rgb_on(Color.RED)) #Red = where are you?
+                    LED.color(255,0,0) #Red = where are you?
 
 
 
