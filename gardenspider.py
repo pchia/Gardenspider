@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-#
 """Camera image classification demo code.
 
 Runs continuous image classification on camera frames and prints detected object
@@ -11,12 +10,15 @@ image_classification_camera.py --num_frames 10
 import argparse
 import contextlib
 import servo
+import LED
 import time
-from aiy.leds import Leds, Color
+from threading import Thread, Semaphore
 from aiy.vision.inference import CameraInference
 from aiy.vision.models import object_detection
 from picamera import PiCamera
 from aiy.vision.annotator import Annotator
+
+sem = Semaphore()
 
 def classes_info(classes):
     return ', '.join('%s (%.2f)' % pair for pair in classes)
@@ -40,6 +42,8 @@ def main():
     parser.add_argument('--nopreview', dest='preview', action='store_false', default=True,
         help='Enable camera preview')
     args = parser.parse_args()
+    
+#    servo.standup()
 
     with PiCamera(sensor_mode=4, framerate=30, resolution=(1640, 1232)) as camera, \
          CameraPreview(camera, enabled=args.preview), \
@@ -52,36 +56,52 @@ def main():
             x, y, width, height = bounding_box
             return (scale_x * x, scale_y * y, scale_x * (x + width),
                     scale_y * (y + height))        
-
         for result in inference.run(args.num_frames):
             objs = object_detection.get_objects(result, threshold=0.3, offset=(0, 0))
             print (objs)
-
-            annotator.clear()
-            for obj in objs:
+#            annotator.clear()
+#            for obj in objs:                                     
+#                annotator.bounding_box(transform(obj.bounding_box), fill=0)
+#            annotator.update()
+            if objs:
+                obj = objs[0]
+                x, y, width, height = obj.bounding_box
+                
+                
                 print (obj.bounding_box[0])
                 x0, y0, width, height = obj.bounding_box
                 x = float((x0 + width/2) - 1640/2) #x range is -820 to 820
                 y = float(1232/2 - (y0 + height/2)) #y range is -616 to 616
                 print (obj.kind)
                 print (obj.score)
+                
                 if obj.kind == 1 and obj.score > 0.5: 
-                    Leds.update(Leds.rgb_on(Color.BLUE)) #Blue = I see you
-                    servo.triwalk(x/41) #820/20
-                    print('xval: %f', x/41)
+                    LED.color(0,0,255)
+                    if -400 < x < 400:
+                        t = Thread(target=servo.triwalk, args = (x/41,))
+                    else:
+                        t = Thread(target=servo.rotate, args = (x/18.222,))
+                        print('rotate!')
+                    t.start()
+                    time.sleep(.3)
+                        
+                    
+
+#                    servo.triwalk(x/41) #820/20
+#                    print('xval: %f', x/41)
 #                    servo.rotate(x/18.222) #820/45
 #                    print('xval: %f', x/18.222)
                     if -50<x<50:
-                        Leds.update(Leds.rgb_on(Color.GREEN)) #Green = I'm aiming at you
+                        LED.color(0,255,0) #Green = I'm aiming at you
                 else:
-                    Leds.update(Leds.rgb_on(Color.RED)) #Red = where are you?
-                    
-                    
-#                annotator.bounding_box(transform(obj.bounding_box), fill=0)
-#            annotator.update()
-#            if objs:
-#                obj = objs[0]
-#                x, y, width, height = obj.bounding_box
+                    LED.color(255,0,0) #Red = where are you?
+                
+#                t.join()
+
+
+
+
+
 #                print (obj.bounding_box)
 #                camera.annotate_text = '%s' % objs[0]
 #                print (camera.annotate_text)
@@ -90,7 +110,6 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 
 
 
