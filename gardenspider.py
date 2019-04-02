@@ -11,8 +11,9 @@ import argparse
 import contextlib
 import servo
 import LED
+import sys
 import time
-from threading import Thread, Semaphore
+from threading import Thread
 from aiy.vision.inference import CameraInference
 from aiy.vision.models import object_detection
 from picamera import PiCamera
@@ -75,7 +76,7 @@ def main():
                 print (obj.kind)
                 print (obj.score)
                 
-                if obj.kind == 1 and obj.score > 0.5: 
+                if obj.kind == 1 and obj.score > 0.5: #obj.kind = 1,2,3 : human,
                     LED.color(0,0,255)
                     if -400 < x < 400:
                         t = Thread(target=servo.triwalk, args = (x/41,))
@@ -83,22 +84,15 @@ def main():
                         t = Thread(target=servo.rotate, args = (x/18.222,))
                         print('rotate!')
                     t.start()
-                    time.sleep(.3)
+                    time.sleep(servo.speed*2 + 0.05) #0.05s = extra time for thread to process
                         
                     
 
-#                    servo.triwalk(x/41) #820/20
-#                    print('xval: %f', x/41)
-#                    servo.rotate(x/18.222) #820/45
-#                    print('xval: %f', x/18.222)
                     if -50<x<50:
                         LED.color(0,255,0) #Green = I'm aiming at you
                 else:
                     LED.color(255,0,0) #Red = where are you?
                 
-#                t.join()
-
-
 
 
 
@@ -109,7 +103,15 @@ def main():
 #                    print ("bike!")
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        LED.color(255,0,0)
+        for h in range(5):
+            LED.color(255,0,0)
+            servo.squat(h*2)
+            time.sleep(0.5)
+            sys.exit(1)
 
 
 
