@@ -109,7 +109,7 @@ if __name__ == '__main__':
         LED.color(255,0,0)
         for h in range(5):
             LED.color(255,0,0)
-            servo.squat(h*2)
+            servo.squat(10 - h*2)
             time.sleep(0.5)
             sys.exit(1)
 
