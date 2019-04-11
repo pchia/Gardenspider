@@ -115,8 +115,8 @@ def seg(joint,deg):
         tuning = 2 
         joint.angle = abs(offset + deg + tuning)                  
 
-def triwalk(drift):
-#if positive, walk straight with slight right drift and vice versa
+def triwalk(drift,vector):
+#if drift positive, walk straight with slight right drift and vice versa
     if drift > 0: #moving right
         R_drift = -drift
         L_drift = 0
@@ -126,94 +126,105 @@ def triwalk(drift):
     elif drift == 0:
         R_drift = 0
         L_drift = 0
+
+    if vector > 1:
+        vector = 1
+    if vector < -1:
+        vector = -1
+        
+        
         
 #Raise and Pivot legs LF LB  RM  
-    seg(LF[0],20 + L_drift)
+    seg(LF[0],vector*(20 + L_drift))
     seg(LF[1],10)
     seg(LF[2],-90)    
     
-    seg(LB[0],20 + L_drift)
+    seg(LB[0],vector*(20 + L_drift))
     seg(LB[1],10)
     seg(LB[2],-90)
     
-    seg(RM[0],20 + R_drift)
+    seg(RM[0],vector*(20 + R_drift))
     seg(RM[1],10)
     seg(RM[2],-90)
     
 # Pivot legs LM RB RF      
-    seg(LM[0],-20 - L_drift)
+    seg(LM[0],vector*(-20 - L_drift))
     seg(LM[1],-30)
     seg(LM[2],-60)
         
-    seg(RB[0],-20 - R_drift)
+    seg(RB[0],vector*(-20 - R_drift))
     seg(RB[1],-30)
     seg(RB[2],-60)
      
-    seg(RF[0],-20 - R_drift)
+    seg(RF[0],vector*(-20 - R_drift))
     seg(RF[1],-30)
     seg(RF[2],-60)
         
     time.sleep(speed)
                 
 #Lower legs LF LB RM  
-    seg(LF[0],20 + L_drift)
+    seg(LF[0],vector*(20 + L_drift))
     seg(LF[1],-30)
     seg(LF[2],-60)
        
-    seg(LB[0],20 + L_drift)
+    seg(LB[0],vector*(20 + L_drift))
     seg(LB[1],-30)
     seg(LB[2],-60)
      
-    seg(RM[0],20 + R_drift)
+    seg(RM[0],vector*(20 + R_drift))
     seg(RM[1],-30)
     seg(RM[2],-60)
         
     time.sleep(speed)
         
 #Raise and Pivot legs LM RB RF
-    seg(LM[0],20 + L_drift)
+    seg(LM[0],vector*(20 + L_drift))
     seg(LM[1],10)
     seg(LM[2],-90)
         
-    seg(RB[0],20 + R_drift)
+    seg(RB[0],vector*(20 + R_drift))
     seg(RB[1],10)
     seg(RB[2],-90)
      
-    seg(RF[0],20 + R_drift)
+    seg(RF[0],vector*(20 + R_drift))
     seg(RF[1],10)
     seg(RF[2],-90)
         
 # Pivot legs LF LB RM      
-    seg(LF[0],-20 - L_drift)
+    seg(LF[0],vector*(-20 - L_drift))
     seg(LF[1],-30)
     seg(LF[2],-60)
        
-    seg(LB[0],-20 - L_drift)
+    seg(LB[0],vector*(-20 - L_drift))
     seg(LB[1],-30)
     seg(LB[2],-60)
      
-    seg(RM[0],-20 - R_drift)
+    seg(RM[0],vector*(-20 - R_drift))
     seg(RM[1],-30)
     seg(RM[2],-60)
     
     time.sleep(speed)      
     
 #Lower legs LM RB RF   
-    seg(LM[0],20 + L_drift)
+    seg(LM[0],vector*(20 + L_drift))
     seg(LM[1],-30)
     seg(LM[2],-60)
         
-    seg(RB[0],20 + R_drift)
+    seg(RB[0],vector*(20 + R_drift))
     seg(RB[1],-30)
     seg(RB[2],-60)
      
-    seg(RF[0],20 + R_drift)
+    seg(RF[0],vector*(20 + R_drift))
     seg(RF[1],-30)
     seg(RF[2],-60)
     
     time.sleep(speed)   
             
+  
+            
 def rotate(direction):
+    print('rotating %f',direction)
+    
     if direction > 45: #limit max
         direction = 45
     if direction < -45: #limit min
@@ -331,6 +342,8 @@ def zero(x):
         seg(LF[c],x)
 
 def standup():
+    print('standing up')
+    
     for j1 in joint1:
         seg(j1,90)
     for j2 in joint2:
@@ -345,22 +358,47 @@ def standup():
     time.sleep(1)
     
 def squat(height): #0-10. 0 = body resting on ground
-    rotate(0) #puts legs in safe position before squatting
+    print('squatting')
+
+#    rotate(0) #puts legs in safe position before squatting
     
-    for j1 in joint1:
-        seg(j1,-30)
-    time.sleep(0.25)
-    for j2 in joint2:
-        seg(j2,-60)
-    time.sleep(1)
+#    for j1 in joint1:
+#        seg(j1,-30)
+#    time.sleep(0.25)
+#    for j2 in joint2:
+#        seg(j2,-60)
+#    time.sleep(1)
     
     for j1 in joint1:
         seg(j1,90 - height*120/10)
     for j2 in joint2:
         seg(j2,-110 + height*50/10)
-    time.sleep(1)
+#    time.sleep(1)
     
+#squat(0)    
+#zero(0)
+#time.sleep(1)
+#standup()   
+#for x in range(4):
+#    triwalk(-20)
+#for x in range(4):
+#    triwalk(20)    
+#for x in range(2):
+#    rotate(45)    
+#for x in range(2):
+#    rotate(-45)    
+#for x in range(2):
+#    rotate(22)    
+#for x in range(2):
+#    rotate(-22)    
     
+##Segment Tester
+#while True:  
+#    segment = 0
+#    x ='segment'    
+#    exec("%s = %s" % (x,input("enter segment ")))
+#    test(segment)
+#zero()
 #zero(0)
 #time.sleep(1)
 #standup()   
