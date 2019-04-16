@@ -361,19 +361,29 @@ def squat(height): #0-10. 0 = body resting on ground
     print('squatting')
 
 #    rotate(0) #puts legs in safe position before squatting
-    
-#    for j1 in joint1:
-#        seg(j1,-30)
-#    time.sleep(0.25)
-#    for j2 in joint2:
-#        seg(j2,-60)
-#    time.sleep(1)
+
     
     for j1 in joint1:
         seg(j1,90 - height*120/10)
     for j2 in joint2:
         seg(j2,-110 + height*50/10)
 #    time.sleep(1)
+
+def twist(yaw):
+    print('twisting')
+    
+    for j0l in joint0[0:3]:
+        seg(j0l,-yaw)
+    for j0r in joint0[3:6]:
+        seg(j0r,yaw)
+    
+def thrust(displacement):
+    print('thrusting')
+    
+    for j0l in joint0[0:3]:
+        seg(j0l,-displacement)
+    for j0r in joint0[3:6]:
+        seg(j0r,-displacement)    
     
 #squat(0)    
 #zero(0)
