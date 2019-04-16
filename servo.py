@@ -10,7 +10,7 @@ for c in range(16):
     kit[1].servo[c].set_pulse_width_range(500, 2500)
     
 speed = 0.125
-
+ 
 RB = []
 RB.extend((kit[0].servo[0], kit[0].servo[1], kit[0].servo[2]))
 RM = []
