@@ -9,14 +9,14 @@ image_classification_camera.py --num_frames 10
 """
 import argparse
 import contextlib
-import tof
+#import tof
 import servo
 import LED
 import sys
 import time
 from threading import Thread
 from aiy.vision.inference import CameraInference
-from aiy.vision.models import orange_object_detection as object_detection
+from aiy.vision.models import new_object_detection as object_detection
 from picamera import PiCamera
 from aiy.vision.annotator import Annotator
 
@@ -63,7 +63,9 @@ def main():
         def transform(bounding_box):
             x, y, width, height = bounding_box
             return (scale_x * x, scale_y * y, scale_x * (x + width),
-                    scale_y * (y + height))        
+                    scale_y * (y + height))     
+        prev_yaw = 0
+        yaw = 0
         for result in inference.run(args.num_frames):
             objs = object_detection.get_objects(result, threshold=0.3, offset=(0, 0))
             print (objs)
@@ -86,18 +88,32 @@ def main():
                 if obj.score > 0.1: #obj.kind = 1,2,3 : human,
 #                if obj.kind == 1 and obj.score > 0.1: #obj.kind = 1,2,3 : human,
 
+
+#################################################################################
+#                    LED.color(0,0,255)
+#                    if -400 < x < 400:
+#                        t = Thread(target=servo.triwalk, args = (x/41,1,))
+#                    else:
+#                        t = Thread(target=servo.rotate, args = (x/18.222,))
+#                    t.start()
+#                    time.sleep(servo.speed*2 + 0.1) #0.1s = extra time for thread to process
+#################################################################################
                     LED.color(0,0,255)
                     if -400 < x < 400:
-                        t = Thread(target=servo.triwalk, args = (x/41,1,))
+                        yaw = prev_yaw + 30*x/400
+                        t = Thread(target=servo.twist, args = (yaw,))
                     else:
                         t = Thread(target=servo.rotate, args = (x/18.222,))
                     t.start()
                     time.sleep(servo.speed*2 + 0.1) #0.1s = extra time for thread to process
-#                    time.sleep(0.3) #0.04s = extra time for thread to process
+                    prev_yaw = yaw
+#################################################################################
 
                     if -50<x<50:
                         LED.color(0,255,0) #Green = I'm aiming at you
-
+                        
+                        
+                        
 #                if tof.distance < 150: #if time of flight sensor detects object <150mm, move back
 #                    servo.triwalk(0,-1)
 #                        t = Thread(target=servo.triwalk, args = (0,-1,))
